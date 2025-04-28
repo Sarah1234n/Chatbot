@@ -6,8 +6,8 @@ date
 echo "Updating Python application on VM..."
 
 # تعريف المجلد ومسار الـ Repo
-APP_DIR="/home/azureuser/chatbot/SDA-Projects"
-GIT_REPO="git@github.com:Sarah1234n/SDA-Projects.git"
+APP_DIR="/home/azureuser"  # بما أن الملفات موجودة في الجذر
+GIT_REPO="git@github.com:Sarah1234n/chatbot.git"
 BRANCH="master"  # تأكد من تغيير هذا إذا كان الفرع مختلف
 
 # تحديث الشيفرة
@@ -16,7 +16,7 @@ if [ -d "$APP_DIR/.git" ]; then
     sudo -u azureuser git -C "$APP_DIR" pull origin "$BRANCH"
 else
     echo "Cloning repo..."
-    sudo -u azureuser git clone -b "$BRANCH" "git@github.com:Sarah1234n/SDA-Projects.git" "$APP_DIR"
+    sudo -u azureuser git clone -b "$BRANCH" "git@github.com:Sarah1234n/chatbot.git" "$APP_DIR"
 fi
 
 # تنشيط البيئة الافتراضية وتثبيت المتطلبات
@@ -45,7 +45,7 @@ else
     exit 1
 fi
 
-# إعادة تشغيل الخدمة (اختياري، إذا كانت لديك خدمة مدارة باستخدام systemd)
+# إعادة تشغيل الخدمات
 sudo systemctl restart chroma.service
 sudo systemctl restart backend.service
 sudo systemctl restart chatbot.service
