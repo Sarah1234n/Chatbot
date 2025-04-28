@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# PostgreSQL history
+.psql_history
+
+# SSH keys
+.ssh/
+
+# User profiles and sudo indicators
+.profile
+.sudo_as_admin_successful
+
+# Chat logs and PDF store
+chat_logs/
+pdf_store/
+
+# Terra files
+terra-5/
+
+# Wheel files
+*.whl
+
+# System files
+.DS_Store
+Thumbs.db
+
