@@ -1,0 +1,43 @@
+name: Deploy Python App to Azure VM
+
+on:
+  push:
+    branches:
+      - master  # أو الفرع الذي تود تتبع التغييرات فيه
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # 4. Azure Login using GitHub Secrets (ensure you've stored your AZURE_CREDENTIALS as a secret)
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 5. Run the update script on Azure VM
+      - name: Deploy to Azure VM
+        run: |
+          az vm extension set \
+            --resource-group "${{ secrets.RESOURCE_GROUP }}" \
+            --vm-name "${{ secrets.VM_NAME }}" \
+            --name CustomScript \
+            --publisher Microsoft.Azure.Extensions \
+            --settings '{"commandToExecute": "bash /home/azureuser/update_app.sh"}'
