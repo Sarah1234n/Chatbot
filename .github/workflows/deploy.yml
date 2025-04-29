@@ -3,14 +3,14 @@ name: Deploy Python App to Azure VM
 on:
   push:
     branches:
-      - master  # غيّر هذا لو عندك فرع مختلف
+      - master  # أو الفرع الذي تود تتبع التغييرات فيه
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the code
+      # 1. Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -26,24 +26,18 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      # 4. Set up SSH key
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+      # 4. Azure Login using GitHub Secrets (ensure you've stored your AZURE_CREDENTIALS as a secret)
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 5. Copy update script to Azure VM
-      - name: Copy update script to Azure VM
+      # 5. Run the update script on Azure VM
+      - name: Deploy to Azure VM
         run: |
-          scp -o StrictHostKeyChecking=no ./update_app.sh azureuser@${{ secrets.VM_IP }}:/home/azureuser/update_app.sh
-
-      # 6. Make the script executable
-      - name: Make update script executable
-        run: |
-          ssh -o StrictHostKeyChecking=no azureuser@${{ secrets.VM_IP }} "chmod +x /home/azureuser/update_app.sh"
-
-      # 7. Run the script on the VM
-      - name: Run update script on Azure VM
-        run: |
-          ssh -o StrictHostKeyChecking=no azureuser@${{ secrets.VM_IP }} "bash /home/azureuser/update_app.sh"
+          az vm extension set \
+            --resource-group "${{ secrets.RESOURCE_GROUP }}" \
+            --vm-name "${{ secrets.VM_NAME }}" \
+            --name CustomScript \
+            --publisher Microsoft.Azure.Extensions \
+            --settings '{"commandToExecute": "bash /home/azureuser/update_app.sh"}'
