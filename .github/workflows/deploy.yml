@@ -1,9 +1,9 @@
-name: Deploy Python App to Azure VM
+name: Python App CI/CD Pipeline with Direct Deployment
 
 on:
   push:
     branches:
-      - master  # أو الفرع الذي تود تتبع التغييرات فيه
+      - master
 
 jobs:
   build-and-deploy:
@@ -14,25 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Set up Python
+      # 2. List files in the repository (debug)
+      - name: List files in the repository
+        run: |
+          ls -R
+
+      # 3. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: 'pip'
 
-      # 3. Install dependencies
+      # 4. Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
-      # 4. Azure Login using GitHub Secrets (ensure you've stored your AZURE_CREDENTIALS as a secret)
+      # 5. Run tests (placeholder)
+      - name: Run tests
+        run: |
+          echo "No tests defined yet."
+
+      # 6. Azure Login using GitHub Secrets
       - name: Azure Login
-        uses: azure/login@v2
+        uses: azure/login@v2.2.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 5. Run the update script on Azure VM
+      # 7. Deploy: Run update script on Azure VM
       - name: Deploy to Azure VM
         run: |
           az vm extension set \
