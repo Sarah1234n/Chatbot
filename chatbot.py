@@ -154,7 +154,7 @@ with st.sidebar:
         st.button("Delete Chat", on_click=delete_chat)
 
 # Main Content
-st.title("Chatbot Application By Sarah N")
+st.title("Chatbot Application By Sarah")
 
 if st.session_state["current_chat"]:
     chat_id = st.session_state["current_chat"]
